@@ -34,7 +34,7 @@ const Header = () => {
                     <nav>
                         <Link to="/apply" onClick={closeNav}>Find a Nanny / Sitter</Link>
                         <Link to="/apply" onClick={closeNav}>Find a Job</Link>
-                        <Link to="/apply" onClick={closeNav} target="_blank" rel="noopener noreferrer">Apply Now</Link>
+                        <Link to="/apply" onClick={closeNav}>Apply Now</Link>
                     </nav>
                     <div className="dropdown-nav mt-4">
                         <div className="dropdown">
