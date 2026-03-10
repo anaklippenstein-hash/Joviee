@@ -1,16 +1,16 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Form = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitMessage, setSubmitMessage] = useState('');
     const [submitError, setSubmitError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formElement = e.currentTarget;
         setIsSubmitting(true);
-        setSubmitMessage('');
         setSubmitError('');
 
         try {
@@ -26,8 +26,12 @@ const Form = () => {
                 throw new Error(data?.message || 'Failed to submit application.');
             }
 
-            setSubmitMessage('Application submitted successfully. Check your email inbox.');
             formElement.reset();
+            navigate('/apply/success', {
+                state: {
+                    message: 'Application submitted successfully. Check your email inbox for additional information.',
+                },
+            });
         } catch (error) {
             setSubmitError(error.message || 'Something went wrong while submitting.');
         } finally {
@@ -126,8 +130,6 @@ const Form = () => {
                     <button type="submit" className="apply-submit" disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Submit Application'}
                     </button>
-
-                    {submitMessage && <p className="apply-feedback apply-feedback-success">{submitMessage}</p>}
                     {submitError && <p className="apply-feedback apply-feedback-error">{submitError}</p>}
                 </form>
             </section>

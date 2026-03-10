@@ -23,52 +23,58 @@ const Header = () => {
                     <div className="line3"></div>
                 </div>
                 <div className="logo">
-                    <picture>
-                        <source media="(max-width: 768px)" srcSet="/images/header-logo-1.webp" />
-                        <img src="/images/jovie-logo3.png" alt="" className='img-fluid' />
-                    </picture>
+                    <Link to="/" onClick={closeNav}>
+                        <picture>
+                            <source media="(max-width: 768px)" srcSet="/images/header-logo-1.webp" />
+                            <img src="/images/jovie-logo3.png" alt="Jovie logo" className='img-fluid' />
+                        </picture>
+                    </Link>
                 </div>
                 <div className={`nav-bar ${isOpen ? 'active' : ''}`}>
                     <nav>
-                        <Link to="" onClick={closeNav}>Find a Nanny / Sitter</Link>
-                        <Link to="" onClick={closeNav}>Find a Job</Link>
-                        <Link to="/apply" onClick={closeNav}>Apply Now</Link>
+                        <Link to="/apply" onClick={closeNav}>Find a Nanny / Sitter</Link>
+                        <Link to="/apply" onClick={closeNav}>Find a Job</Link>
+                        <Link to="/apply" onClick={closeNav} target="_blank" rel="noopener noreferrer">Apply Now</Link>
                     </nav>
                     <div className="dropdown-nav mt-4">
                         <div className="dropdown">
-                            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Family Childcare
-                            </a>
+                            </button>
 
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">Nannies</a></li>
-                                <li><a className="dropdown-item" href="#">Babysitters</a></li>
-                                <li><a className="dropdown-item" href="#">Special Needs Childcare</a></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Nannies</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Babysitters</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Special Needs Childcare</Link></li>
                             </ul>
                         </div>
                         <div className="dropdown">
-                            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Family Childcare
-                            </a>
+                            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Business & Events Childcare
+                            </button>
 
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">Nannies</a></li>
-                                <li><a className="dropdown-item" href="#">Babysitters</a></li>
-                                <li><a className="dropdown-item" href="#">Special Needs Childcare</a></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Conference & Events</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Wedding Childcare</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Hotel & Vacation Babysitting</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Childcare for Special Events</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Employee Backup care</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Childcare Center Staffing</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Sports Teams Childcare</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Gym & Club Childcare</Link></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Church Childcare</Link></li>
                             </ul>
                         </div>
                         <div className="dropdown">
-                            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Family Childcare
-                            </a>
+                            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                About Us
+                            </button>
 
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">Nannies</a></li>
-                                <li><a className="dropdown-item" href="#">Babysitters</a></li>
-                                <li><a className="dropdown-item" href="#">Special Needs Childcare</a></li>
+                                <li><Link className="dropdown-item" to="/apply" onClick={closeNav}>Resources & FAQ</Link></li>
                             </ul>
                         </div>
-                        <Link to="" className='blog-text' onClick={closeNav}>Blog</Link>
+                        <Link to="/apply" className='blog-text' onClick={closeNav}>Blog</Link>
                     </div>
                 </div>
             </header>

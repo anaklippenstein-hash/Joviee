@@ -1,6 +1,7 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { FaApple } from "react-icons/fa";
 import { FaGooglePlay } from "react-icons/fa";
+import { Link } from "react-router-dom";
 const Footer = () =>{
     return(
         <>
@@ -11,19 +12,19 @@ const Footer = () =>{
                         <div className="f-box1">
                             <img src="/images/f-logo.png" alt="" className="img-fluid" />
                             <div className="f-socials d-flex align-item-center gap-4">
-                                <a href="#"><FaFacebookF /></a>
-                                <a href="#"><FaInstagram /></a>
-                                <a href="#"><FaLinkedinIn /></a>
+                                <Link to="/apply"><FaFacebookF /></Link>
+                                <Link to="/apply"><FaInstagram /></Link>
+                                <Link to="/apply"><FaLinkedinIn /></Link>
                             </div>
                             <div className="f-app my-3">
                                 <div className="app d-flex gap-1 align-item-center">
-                                    <a href="#"><FaApple /></a>
+                                    <Link to="/apply"><FaApple /></Link>
                                     <p>App Store</p>
                                 </div>
                             </div>
                             <div className="f-app">
                                 <div className="app d-flex gap-1 align-item-center">
-                                    <a href="#"><FaGooglePlay /></a>
+                                    <Link to="/apply"><FaGooglePlay /></Link>
                                     <p>Google Play</p>
                                 </div>
                             </div>

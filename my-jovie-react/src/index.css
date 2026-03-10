@@ -86,11 +86,6 @@ nav a:nth-child(2):hover{
     background-color: var(--color1);
     color: var(--text-color1);
 }
-.dropdown:hover > .dropdown-menu,
-.dropdown:focus-within > .dropdown-menu {
-  display: block;
-  margin-top: 0; 
-}
 .dropdown-toggle {
   background-color: transparent !important;
   border: none !important;
@@ -356,6 +351,24 @@ nav a:nth-child(2):hover{
 }
 .apply-feedback-error{
     color: #c32424;
+}
+.submit-success-card{
+    text-align: center;
+}
+.submit-success-message{
+    color: #24323b;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+.submit-success-actions{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.submit-success-btn{
+    display: block;
+    text-decoration: none;
 }
 /* apply page end */
 
@@ -978,8 +991,8 @@ main section p{
         left: 0;
         display: flex;
         background-color: white;
-        min-height: calc(100vh - 100%);
-        width: 50%;
+        min-height: calc(50vh - 100%);
+        width: 70%;
         flex-direction: column;
         align-items: flex-start;
         transform: translateX(-100%);
@@ -1012,11 +1025,13 @@ main section p{
   }
 
   .dropdown-menu {
-    display: block;
     position: static !important;
     float: none;
     width: 100%;
     margin-top: 8px;
+  }
+  .dropdown-menu.show {
+    display: block;
   }
 
   .blog-text{
