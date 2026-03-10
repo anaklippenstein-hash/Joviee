@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE = import.meta.env.VITE_API_BASE || '';
+
 const Form = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
@@ -15,7 +17,7 @@ const Form = () => {
 
         try {
             const formData = new FormData(formElement);
-            const response = await fetch('/api/form-submit', {
+            const response = await fetch(`${API_BASE}/api/form-submit`, {
                 method: 'POST',
                 body: formData,
             });
